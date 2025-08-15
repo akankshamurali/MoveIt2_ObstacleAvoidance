@@ -30,17 +30,14 @@ Make sure you are running Ubuntu 22.04 with ROS 2 Humble installed. You’ll als
       ros-humble-rviz2
 
 2. Create a directory and Clone the Repository
-   
-    mkdir -p ~/ws_panda_box/src
-   
-    cd ~/ws_panda_box/src
-   
-    git clone https://github.com/akankshamurali/MoveIt2_ObstacleAvoidance.git
+       mkdir -p ~/ws_panda_box/src
+       cd ~/ws_panda_box/src
+       git clone https://github.com/akankshamurali/MoveIt2_ObstacleAvoidance.git
 
 4. Build the Package
-    cd ~/ws_panda_box
-    colcon build --merge-install
-    source install/setup.bash
+       cd ~/ws_panda_box
+       colcon build --merge-install
+       source install/setup.bash
 
 Why --merge-install?
 By default, colcon build installs each package into its own folder inside install/. Using --merge-install combines all packages into a single unified install/ directory.
