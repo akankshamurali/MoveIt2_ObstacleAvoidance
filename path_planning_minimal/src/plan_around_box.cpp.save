@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   // Keep box visible for a moment
   rclcpp::sleep_for(std::chrono::seconds(2));
 
-  // Cleanup (optional)
+
   // planning_scene_interface.removeCollisionObjects({"box1"});
 
   exec.cancel();
