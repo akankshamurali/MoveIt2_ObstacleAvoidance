@@ -42,7 +42,6 @@ int main(int argc, char** argv)
   opts.automatically_declare_parameters_from_overrides(true);
   auto node = rclcpp::Node::make_shared("panda_plan_around_box", opts);
 
-// Safely read parameters without double-declare crashes
   if (!node->has_parameter("interactive")) {
    node->declare_parameter<bool>("interactive", false);
   }
@@ -72,11 +71,10 @@ int main(int argc, char** argv)
   const std::string planning_frame = move_group.getPlanningFrame();
   RCLCPP_INFO(node->get_logger(), "Planning frame: %s", planning_frame.c_str());
 
-  // Good, non-colliding endpoints
+  
   const geometry_msgs::msg::Pose A = makePose(0.38, -0.28, 0.45, 1.0);
   const geometry_msgs::msg::Pose B = makePose(0.72,  0.28, 0.45, 1.0);
 
-  // Move to START (A) so it's visible/clear
   move_group.setPoseTarget(A, ee_link);
   moveit::planning_interface::MoveGroupInterface::Plan to_A;
   if (move_group.plan(to_A) != moveit::core::MoveItErrorCode::SUCCESS ||
@@ -87,7 +85,6 @@ int main(int argc, char** argv)
   }
   rclcpp::sleep_for(std::chrono::milliseconds(300));
 
-  // Place a cube at midpoint (with clearance from START)
   const std::string cube_id = "blocking_cube";
   const double cube_side = 0.22;
   const double min_clear = 0.06;
@@ -97,7 +94,6 @@ int main(int argc, char** argv)
       0.5 * (A.position.y + B.position.y),
       0.5 * (A.position.z + B.position.z), 1.0);
 
-  // Ensure it isn't overlapping START
   {
     const double hx = cube_side * 0.5, hy = cube_side * 0.5, hz = cube_side * 0.5;
     double dx = std::abs(cube_pose.position.x - A.position.x);
@@ -127,7 +123,7 @@ int main(int argc, char** argv)
               cube_pose.position.x, cube_pose.position.y, cube_pose.position.z);
 
   if (interactive) {
-    // ✔ Interactive requirement: set poses in RViz
+
     RCLCPP_INFO(node->get_logger(),
       "Interactive mode ON:\n"
       " - In RViz MotionPlanning panel:\n"
@@ -135,11 +131,11 @@ int main(int argc, char** argv)
       "   • Goal State: use the Pose Goal widget or drag the interactive marker\n"
       "   • Click 'Plan' then 'Execute'.\n"
       "The cube stays in the scene for collision-avoidance.");
-    // Just idle so RViz/MoveIt stays live
+
     rclcpp::Rate r(30);
     while (rclcpp::ok()) r.sleep();
   } else if (loop_mode) {
-    // Auto loop A <-> B, always avoiding the cube
+
     bool to_B = true;
     size_t iter = 0;
     while (rclcpp::ok()) {
